@@ -1,0 +1,6 @@
+com/microsoft/mysearch/qa/pages/HomePage.class
+com/microsoft/mysearch/qa/util/PropertyLoader.class
+com/microsoft/mysearch/qa/webdriver/WebDriverFactory.class
+com/microsoft/mysearch/qa/util/Browser.class
+com/microsoft/mysearch/qa/pages/Page.class
+com/microsoft/mysearch/qa/webdriver/AuthenticatedHtmlUnitDriver.class
