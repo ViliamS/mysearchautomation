@@ -270,6 +270,10 @@ public class XPathBuilderTest {
     @Test
     public void test2() {
 
+        String xpath = getXPath(div, equals, class_att, "class") + getChildNodeXPath(input, equals, id, "search");
+        String xpath2 = "//div[@class='class'][.//input[@id='search']]";
+        Assert.assertTrue(areStringsSame(xpath, xpath2));
+
     }
 
     @Test

@@ -6,73 +6,70 @@ import org.junit.Assert;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
-public class XPathBuilder implements IXPath {
-
-    private String xPath = "";
-    private ACTIONS action;
+class XPathBuilder implements IXPath {
 
     private static String notContains(ATTRIBUTES attribute, String value) {
         if (attribute.get().equalsIgnoreCase(ATTRIBUTES.TEXT.get()))
             return "[" + PREFIX.NOT.get() + "(" + ACTION.CONTAINS.get() + "(" + ATTRIBUTES.TEXT.get() + ",'" + value + "'))]";
-        if (attribute.get().equalsIgnoreCase(ATTRIBUTES.ANY.get()))                          /** todo HERE IS EXCEPTION IN CREATION IF USING ATTRIBUTES.ANY ---> [not(contains(.,'Your accounts'))] there is not used '@' before attribute */
+        if (attribute.get().equalsIgnoreCase(ATTRIBUTES.ANY.get()))
             return "[" + PREFIX.NOT.get() + "(" + ACTION.CONTAINS.get() + "(" + attribute.get() + ",'" + value + "'))]";
         return "[" + PREFIX.NOT.get() + "(" + ACTION.CONTAINS.get() + "(@" + attribute.get() + ",'" + value + "'))]";
     }
 
     private static String notContains(ATTRIBUTES attributes, XPathValues attributeValues) {
-        String xpath = "";
+        StringBuilder xpath = new StringBuilder();
         for (String oneValue : attributeValues.get()) {
-            xpath = xpath + XPathBuilder.notContains(attributes, oneValue);
+            xpath.append(XPathBuilder.notContains(attributes, oneValue));
         }
-        return xpath;
+        return xpath.toString();
     }
 
     private static String contains(ATTRIBUTES attribute, String attributeValue) {
         if (attribute.get().equalsIgnoreCase(ATTRIBUTES.TEXT.get()))
             return "[" + ACTION.CONTAINS.get() + "(" + ATTRIBUTES.TEXT.get() + ",'" + attributeValue + "')]";
-        if (attribute.get().equalsIgnoreCase(ATTRIBUTES.ANY.get()))                          /** todo HERE IS EXCEPTION IN CREATION IF USING ATTRIBUTES.ANY ---> [contains(.,'Your accounts')] there is not used '@' before attribute */
+        if (attribute.get().equalsIgnoreCase(ATTRIBUTES.ANY.get()))
             return "[" + ACTION.CONTAINS.get() + "(" + attribute.get() + ",'" + attributeValue + "')]";
         return "[" + ACTION.CONTAINS.get() + "(@" + attribute.get() + ",'" + attributeValue + "')]";
     }
 
     private static String contains(ATTRIBUTES attributes, XPathValues attributeValues) {
-        String xpath = "";
+        StringBuilder xpath = new StringBuilder();
         for (String oneValue : attributeValues.get()) {
-            xpath = xpath + XPathBuilder.contains(attributes, oneValue);
+            xpath.append(XPathBuilder.contains(attributes, oneValue));
         }
-        return xpath;
+        return xpath.toString();
     }
 
-    public static String notEqualsTo(ATTRIBUTES attribute, String attributeValue) {
+    private static String notEqualsTo(ATTRIBUTES attribute, String attributeValue) {
         if (attribute.get().equalsIgnoreCase(ATTRIBUTES.TEXT.get()))
             return "[" + PREFIX.NOT.get() + "(" + ATTRIBUTES.TEXT.get() + "='" + attributeValue + "')]";
-        if (attribute.get().equalsIgnoreCase(ATTRIBUTES.ANY.get()))                          /** todo HERE IS EXCEPTION IN CREATION IF USING ATTRIBUTES.ANY ---> [not(contains(.,'Your accounts'))] there is not used '@' before attribute */
+        if (attribute.get().equalsIgnoreCase(ATTRIBUTES.ANY.get()))
             return "[" + PREFIX.NOT.get() + "(" + attribute.get() + "='" + attributeValue + "')]";
         return "[" + PREFIX.NOT.get() + "(@" + attribute.get() + "='" + attributeValue + "')]";
     }
 
-    public static String notEqualsTo(ATTRIBUTES attribute, XPathValues equalsValues) {
-        String xpath = "";
+    private static String notEqualsTo(ATTRIBUTES attribute, XPathValues equalsValues) {
+        StringBuilder xpath = new StringBuilder();
         for (String value : equalsValues.get()) {
-            xpath = xpath + notEqualsTo(attribute, value);
+            xpath.append(notEqualsTo(attribute, value));
         }
-        return xpath;
+        return xpath.toString();
     }
 
-    public static String equalsTo(ATTRIBUTES attribute, String attributeValue) {
+    private static String equalsTo(ATTRIBUTES attribute, String attributeValue) {
         if (attribute.get().equalsIgnoreCase(ATTRIBUTES.TEXT.get()))
             return "[" + ATTRIBUTES.TEXT.get() + "='" + attributeValue + "']";
-        if (attribute.get().equalsIgnoreCase(ATTRIBUTES.ANY.get()))                          /** todo HERE IS EXCEPTION IN CREATION IF USING ATTRIBUTES.ANY ---> [not(contains(.,'Your accounts'))] there is not used '@' before attribute */
+        if (attribute.get().equalsIgnoreCase(ATTRIBUTES.ANY.get()))
             return "[" + attribute.get() + "='" + attributeValue + "']";
         return "[@" + attribute.get() + "='" + attributeValue + "']";
     }
 
-    public static String equalsTo(ATTRIBUTES attribute, XPathValues equalsValues) {
-        String xpath = "";
+    private static String equalsTo(ATTRIBUTES attribute, XPathValues equalsValues) {
+        StringBuilder xpath = new StringBuilder();
         for (String value : equalsValues.get()) {
-            xpath = xpath + equalsTo(attribute, value);
+            xpath.append(equalsTo(attribute, value));
         }
-        return xpath;
+        return xpath.toString();
     }
 
     private static String andContains(ATTRIBUTES attribute, XPathValues attributeValues) {
@@ -111,15 +108,15 @@ public class XPathBuilder implements IXPath {
         // Changing list containing Values of attribute into List of xPaths contains attribute value for each entry of List
         containsBeforeSubstringAndContains.addAll(attributeValues.stream().map(attributeValue -> equalsTo(attribute, attributeValue)).collect(Collectors.toList()));
         // adding first entry as there is not being removed the first square bracket
-        String xpath = containsBeforeSubstringAndContains.get(0).substring(0, containsBeforeSubstringAndContains.get(0).length() - 1);
+        StringBuilder xpath = new StringBuilder(containsBeforeSubstringAndContains.get(0).substring(0, containsBeforeSubstringAndContains.get(0).length() - 1));
         for (int i = 1; i < containsBeforeSubstringAndContains.size() - 1; i++) {
             // for cycle is skipping first value as that was already added when initializing String xpath
-            xpath = xpath + " " + action.get() + " " + containsBeforeSubstringAndContains.get(i).substring(1, containsBeforeSubstringAndContains.get(i).length() - 1);
+            xpath.append(" ").append(action.get()).append(" ").append(containsBeforeSubstringAndContains.get(i).substring(1, containsBeforeSubstringAndContains.get(i).length() - 1));
         }
         //for skipped also adding a last value as there we don't want to remove the last square bracket
         int listSize = containsBeforeSubstringAndContains.get(attributeValues.size() - 1).length();
-        xpath = xpath + " " + action.get() + " " + containsBeforeSubstringAndContains.get(attributeValues.size() - 1).substring(1, listSize);
-        return xpath;
+        xpath.append(" ").append(action.get()).append(" ").append(containsBeforeSubstringAndContains.get(attributeValues.size() - 1).substring(1, listSize));
+        return xpath.toString();
     }
 
     private static String andActionContains(ACTION action, ATTRIBUTES attribute, LinkedList<String> attributeValues) {
@@ -130,18 +127,18 @@ public class XPathBuilder implements IXPath {
         // Changing list containing Values of attribute into List of xPaths contains attribute value for each entry of List
         containsBeforeSubstringAndContains.addAll(attributeValues.stream().map(attributeValue -> contains(attribute, attributeValue)).collect(Collectors.toList()));
         // adding first entry as there is not being removed the first square bracket
-        String xpath = containsBeforeSubstringAndContains.get(0).substring(0, containsBeforeSubstringAndContains.get(0).length() - 1);
+        StringBuilder xpath = new StringBuilder(containsBeforeSubstringAndContains.get(0).substring(0, containsBeforeSubstringAndContains.get(0).length() - 1));
         for (int i = 1; i < containsBeforeSubstringAndContains.size() - 1; i++) {
             // for cycle is skipping first value as that was already added when initializing String xpath
-            xpath = xpath + " " + action.get() + " " + containsBeforeSubstringAndContains.get(i).substring(1, containsBeforeSubstringAndContains.get(i).length() - 1);
+            xpath.append(" ").append(action.get()).append(" ").append(containsBeforeSubstringAndContains.get(i).substring(1, containsBeforeSubstringAndContains.get(i).length() - 1));
         }
         //for skipped also adding a last value as there we don't want to remove the last square bracket
         int listSize = containsBeforeSubstringAndContains.get(attributeValues.size() - 1).length();
-        xpath = xpath + " " + action.get() + " " + containsBeforeSubstringAndContains.get(attributeValues.size() - 1).substring(1, listSize);
-        return xpath;
+        xpath.append(" ").append(action.get()).append(" ").append(containsBeforeSubstringAndContains.get(attributeValues.size() - 1).substring(1, listSize));
+        return xpath.toString();
     }
 
-    public static String getXPath(ACTIONS action, ATTRIBUTES attributes, XPathValues xPathValues) {
+    static String getXPath(ACTIONS action, ATTRIBUTES attributes, XPathValues xPathValues) {
 
         switch (action) {
 
@@ -174,7 +171,7 @@ public class XPathBuilder implements IXPath {
         }
     }
 
-    public static String getElementXpath(PREFIX prefix, ELEMENTS element) {
+    static String getElementXpath(PREFIX prefix, ELEMENTS element) {
         return prefix.get() + element.get();
     }
 }

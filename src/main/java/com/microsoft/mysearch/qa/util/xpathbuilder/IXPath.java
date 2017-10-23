@@ -1,6 +1,5 @@
 package com.microsoft.mysearch.qa.util.xpathbuilder;
 
-import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Table;
 import com.google.inject.ImplementedBy;
@@ -13,7 +12,7 @@ import java.util.Map;
 @ImplementedBy(XPath.class)
 public interface IXPath {
 
-    static ELEMENTS
+    ELEMENTS
 
             wi =                ELEMENTS.WI,
             input =             ELEMENTS.INPUT,
@@ -34,7 +33,7 @@ public interface IXPath {
             virtualRepeat =     ELEMENTS.VIRTUAL_REPEAT,
             footer =            ELEMENTS.FOOTER;
 
-    static ATTRIBUTES
+    ATTRIBUTES
             ariaDisabled =      ATTRIBUTES.ARIA_DISABLED,
             dataType =          ATTRIBUTES.DATA_TYPE,
             id =                ATTRIBUTES.ID,
@@ -57,12 +56,12 @@ public interface IXPath {
             any =               ATTRIBUTES.ANY,
             dataPath =          ATTRIBUTES.DATA_PATH;
 
-    static ACTION
+    ACTION
             and =               ACTION.AND,
             not =               ACTION.NOT,
             or =                ACTION.OR;
 
-    static ACTIONS
+    ACTIONS
 
             contains =          ACTIONS.CONTAINS,
             equals =            ACTIONS.EQUALS,
@@ -73,12 +72,9 @@ public interface IXPath {
             orContains =        ACTIONS.OR_CONTAINS,
             andContains =       ACTIONS.AND_CONTAINS;
 
-    static PREFIX
+    PREFIX
             singleSlash =       PREFIX.SINGLE_SLASH,
             doubleSlash =       PREFIX.DOUBLE_SLASH;
-
-//    LinkedListMultimap<LinkedListMultimap<XPathElement, LinkedList<ACTIONS>>, LinkedListMultimap<ATTRIBUTES, XPathValues>>  xpathListMap = LinkedListMultimap.create();
-//    Table<ACTIONS, LinkedList<ATTRIBUTES>, LinkedList<XPathValues>>                                                         newXPathTable = HashBasedTable.create();
 
     static String getXPath(ELEMENTS element) {
         return new XPathElement(doubleSlash, element).getXPath();
@@ -108,6 +104,34 @@ public interface IXPath {
         return new XPath(prefix, element, action, attribute, value).getXPath();
     }
 
+    static String getChildNodeXPath(PREFIX prefix, ELEMENTS element, ACTIONS action, ATTRIBUTES attribute, XPathValues value){
+        return new XPathChildNode(prefix, element, action, attribute, value).getXPath();
+    }
+
+    static String getChildNodeXPath(ELEMENTS element) {
+        return new XPathChildNode(doubleSlash, element).getXPath();
+    }
+
+    static String getChildNodeXPath(PREFIX prefix, ELEMENTS element) {
+        return new XPathChildNode(prefix, element).getXPath();
+    }
+
+    static String getChildNodeXPath(ELEMENTS element, ACTIONS action, ATTRIBUTES attribute, String value) {
+        return new XPathChildNode(element, action, attribute, value).getXPath();
+    }
+
+    static String getChildNodeXPath(ELEMENTS element, ACTIONS action, ATTRIBUTES attribute, LinkedList<String> value) {
+        return new XPathChildNode(element, action, attribute, value).getXPath();
+    }
+
+    static String getXPgetChildNodeXPathath(ELEMENTS element, ACTIONS action, ATTRIBUTES attribute, XPathValues values) {
+        return new XPathChildNode(element, action, attribute, values).getXPath();
+    }
+
+    static String getChildNodeXPath(PREFIX prefix, ELEMENTS element, ACTIONS action, ATTRIBUTES attribute, String value) {
+        return new XPathChildNode(prefix, element, action, attribute, value).getXPath();
+    }
+
     static String getXPath_DirectSibling(ELEMENTS element) {
         return new XPathElement(singleSlash, element).getXPath();
     }
@@ -129,8 +153,8 @@ public interface IXPath {
     }
 
     /************************************ Div And Contains DataPath ************************************/
-    static String getXPath_DivAndContainsDataPath(String dataPath) {
-        return getXPath_DivAndContainsDataPath(new XPathValues(dataPath));
+    static void getXPath_DivAndContainsDataPath(String dataPath) {
+        getXPath_DivAndContainsDataPath(new XPathValues(dataPath));
     }
 
     static String getXPath_DivAndContainsDataPath(String dataPath, String dataPath2) {
@@ -249,7 +273,7 @@ public interface IXPath {
     static String getXPath_DirectAButtonAndContainsWicketpath(String value, String value2, String value3){
         return getXPath_DirectAButtonAndContainsWicketpath(new XPathValues(value, value2, value3));
     }
-    // Those are just different kinds of same shortcuts for getXPaht callings .... to save your time :) UI automation never ever again produces buggy xpaths.... just if you are wrongly creating newer ever again by typo.... :)W
+
     static String getXPath_DirectAButtonAndContainsWicketpath(XPathValues xPathValues){
         return getXPath(singleSlash, a, andContains, wicketpath, xPathValues);
     }/************************************  Direct A Button And Contains Wicketpath ************************************/
@@ -398,7 +422,7 @@ public interface IXPath {
     }
 
     static String getXPath(Table<ACTIONS, LinkedList<ATTRIBUTES>, LinkedList<XPathValues>> xPathTable) {
-        String xPath = "";
+        StringBuilder xPath = new StringBuilder();
         for (Table.Cell<ACTIONS, LinkedList<ATTRIBUTES>, LinkedList<XPathValues>> tableCell : xPathTable.cellSet()) {
 
             if (tableCell.getColumnKey() == null)
@@ -410,31 +434,31 @@ public interface IXPath {
             for (ATTRIBUTES attribute : tableCell.getColumnKey()) {
 
                 for (XPathValues values : tableCell.getValue()) {
-                    xPath = xPath + XPathBuilder.getXPath(tableCell.getRowKey(), attribute, values);
+                    xPath.append(XPathBuilder.getXPath(tableCell.getRowKey(), attribute, values));
                 }
             }
         }
-        return xPath;
+        return xPath.toString();
     }
 
     static String getXPath(LinkedListMultimap<LinkedListMultimap<XPathElement, LinkedList<ACTIONS>>, LinkedListMultimap<ATTRIBUTES, XPathValues>> xpathListMap) {
-        String xpath = "";
+        StringBuilder xpath = new StringBuilder();
         for (Map.Entry<LinkedListMultimap<XPathElement, LinkedList<ACTIONS>>, LinkedListMultimap<ATTRIBUTES, XPathValues>> mapEntry : xpathListMap.entries()) {
             for (Map.Entry<XPathElement, LinkedList<ACTIONS>> elementActionsMapEntry : mapEntry.getKey().entries()) {
                 for (Map.Entry<PREFIX, ELEMENTS> elementEntry : elementActionsMapEntry.getKey().entries()) {
-                    /** Adding into Xpath '// + element' or '/ + element' */
-                    xpath = xpath + XPathBuilder.getElementXpath(elementEntry.getKey(), elementEntry.getValue());
-                    /** Adding into Xpath '// + element' or '/ + element' */
+                    /* Adding into Xpath '// + element' or '/ + element' */
+                    xpath.append(XPathBuilder.getElementXpath(elementEntry.getKey(), elementEntry.getValue()));
+                    /* Adding into Xpath '// + element' or '/ + element' */
                     for (ACTIONS action : elementActionsMapEntry.getValue()) {
                         for (Map.Entry<ATTRIBUTES, XPathValues> attributesValuesMapEntry : mapEntry.getValue().entries()) {
-                            /** Adding into Xpath based on action [contains|equals etc...] an [@attribute='value']  */
-                            xpath = xpath + XPathBuilder.getXPath(action, attributesValuesMapEntry.getKey(), attributesValuesMapEntry.getValue());
-                            /** Adding into Xpath based on action [contains|equals etc...] an [@attribute='value']  */
+                            /* Adding into Xpath based on action [contains|equals etc...] an [@attribute='value']  */
+                            xpath.append(XPathBuilder.getXPath(action, attributesValuesMapEntry.getKey(), attributesValuesMapEntry.getValue()));
+                            /* Adding into Xpath based on action [contains|equals etc...] an [@attribute='value']  */
                         }
                     }
                 }
             }
         }
-        return xpath;
+        return xpath.toString();
     }
 }

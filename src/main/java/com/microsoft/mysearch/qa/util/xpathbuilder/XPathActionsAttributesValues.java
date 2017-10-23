@@ -16,15 +16,15 @@ public class XPathActionsAttributesValues implements IXPath {
     private Table<ACTIONS, LinkedList<ATTRIBUTES>, LinkedList<XPathValues>> xPathTable;
 
     @Inject
-    public XPathActionsAttributesValues(Table<ACTIONS, LinkedList<ATTRIBUTES>, LinkedList<XPathValues>> xPathTable) {
+    private XPathActionsAttributesValues(Table<ACTIONS, LinkedList<ATTRIBUTES>, LinkedList<XPathValues>> xPathTable) {
         this.xPathTable = xPathTable;
     }
 
-    public XPathActionsAttributesValues(ACTIONS action, LinkedList<ATTRIBUTES> attributes, LinkedList<XPathValues> values) {
+    XPathActionsAttributesValues(ACTIONS action, LinkedList<ATTRIBUTES> attributes, LinkedList<XPathValues> values) {
         this.xPathTable.put(action, attributes, values);
     }
 
-    public XPathActionsAttributesValues(ACTIONS action, ATTRIBUTES attribute, XPathValues values) {
+    XPathActionsAttributesValues(ACTIONS action, ATTRIBUTES attribute, XPathValues values) {
         this.xPathTable = XPathActionsAttributesValues.getXPathTable(action, new LinkedList<ATTRIBUTES>() {{
             add(attribute);
         }}, new LinkedList<XPathValues>() {{
@@ -32,12 +32,12 @@ public class XPathActionsAttributesValues implements IXPath {
         }});
     }
 
-    public XPathActionsAttributesValues(ACTIONS action, ATTRIBUTES attribute, String value) {
+    XPathActionsAttributesValues(ACTIONS action, ATTRIBUTES attribute, String value) {
         this.xPathTable = XPathActionsAttributesValues.getXPathTable(action, attribute, new XPathValues(value));
     }
 
-    public String getXPath() {
-        String xPath = "";
+    String getXPath() {
+        StringBuilder xPath = new StringBuilder();
 
         for (Table.Cell<ACTIONS, LinkedList<ATTRIBUTES>, LinkedList<XPathValues>> tableCell : this.xPathTable.cellSet()) {
 
@@ -48,14 +48,14 @@ public class XPathActionsAttributesValues implements IXPath {
 
             for (ATTRIBUTES attribute : tableCell.getColumnKey()) {
                 for (XPathValues values : tableCell.getValue()) {
-                        xPath = xPath + XPathBuilder.getXPath(tableCell.getRowKey(), attribute, values);
+                        xPath.append(XPathBuilder.getXPath(tableCell.getRowKey(), attribute, values));
                     }
                 }
             }
-        return xPath;
+        return xPath.toString();
     }
 
-    public Table<ACTIONS, LinkedList<ATTRIBUTES>, LinkedList<XPathValues>> getxPathTable(){
+    Table<ACTIONS, LinkedList<ATTRIBUTES>, LinkedList<XPathValues>> getxPathTable(){
         return this.xPathTable;
     }
 
@@ -81,7 +81,7 @@ public class XPathActionsAttributesValues implements IXPath {
         }}));
     }
 
-    public static Table<ACTIONS, LinkedList<ATTRIBUTES>, LinkedList<XPathValues>> getXPathTable(ACTIONS action, ATTRIBUTES attribute, XPathValues values) {
+    private static Table<ACTIONS, LinkedList<ATTRIBUTES>, LinkedList<XPathValues>> getXPathTable(ACTIONS action, ATTRIBUTES attribute, XPathValues values) {
         return XPathActionsAttributesValues.getXPathTable(action, new LinkedList<ATTRIBUTES>() {{
             add(attribute);
         }}, new LinkedList<XPathValues>() {{
@@ -89,7 +89,7 @@ public class XPathActionsAttributesValues implements IXPath {
         }});
     }
 
-    public static Table<ACTIONS, LinkedList<ATTRIBUTES>, LinkedList<XPathValues>> getXPathTable(ACTIONS action, LinkedList<ATTRIBUTES> attributes, LinkedList<XPathValues> values) {
+    private static Table<ACTIONS, LinkedList<ATTRIBUTES>, LinkedList<XPathValues>> getXPathTable(ACTIONS action, LinkedList<ATTRIBUTES> attributes, LinkedList<XPathValues> values) {
         Table<ACTIONS, LinkedList<ATTRIBUTES>, LinkedList<XPathValues>> xPathTable = HashBasedTable.create();
         xPathTable.put(action, attributes, values);
         return xPathTable;
