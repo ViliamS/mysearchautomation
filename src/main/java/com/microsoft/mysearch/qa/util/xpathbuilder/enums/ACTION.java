@@ -5,19 +5,13 @@ import java.util.LinkedList;
 
 public enum ACTION {
 
-    AND(PREFIX.AND.get()),
-    OR(PREFIX.OR.get()),
-    CONTAINS("contains"),
-    EQUALS("equals"),
-    SIBLING(PREFIX.SIBLING.get()),
-    DESCENDANT(PREFIX.DESCENDANT.get()),
-    CHILD(PREFIX.CHILD.get()),
-    CHECK("check"),
-    UNCHECK(PREFIX.UN.get() + ACTION.CHECK.get()),
-    HIDE("hide"),
-    SHOW("show"),
-    UNHIDE(PREFIX.UN.get() + ACTION.HIDE.get()),
-    NOT("not");
+    ATTRIBUTE_ONLY  ("attribute without value"),
+    CONTAINS        ("contains"),
+    EQUALS          ("equals"),
+
+    NOT_ATTRIBUTE   (PREFIX.NOT.get() + " " + ATTRIBUTE_ONLY.get()),
+    NOT_CONTAINS    (PREFIX.NOT.get() + " " + CONTAINS.get()),
+    NOT_EQUALS      (PREFIX.NOT.get() + " " + EQUALS.get());
 
     private String action;
 

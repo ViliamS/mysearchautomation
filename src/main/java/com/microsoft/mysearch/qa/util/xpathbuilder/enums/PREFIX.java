@@ -5,17 +5,17 @@ import java.util.LinkedList;
 
 public enum PREFIX {
 
-    SINGLE_SLASH ("/"),
-    DOUBLE_SLASH ("//"),
-    AND ("and"),
-    NOT ("not"),
-    OR  ("or"),
-    FOLLOWING("/following-"),
-    SIBLING ("sibling::"),
-    DESCENDANT("descendant::"),
-    CHILD("child::"),
-    EMPTY(""),
-    UN("un");
+    SINGLE_SLASH    ("/"),
+    DOUBLE_SLASH    ("//"),
+    AND             ("and"),
+    NOT             ("not"),
+    OR              ("or"),
+    FOLLOWING       ("/following-"),
+    SIBLING         ("sibling::"),
+    DESCENDANT      ("descendant::"),
+    CHILD           ("child::"),
+    EMPTY           (""),
+    UN              ("un");
 
     private String prefix;
 

@@ -5,22 +5,28 @@ import java.util.LinkedList;
 
 public enum ACTIONS {
 
-    CONTAINS                (PREFIX.EMPTY,      ACTION.CONTAINS),
+    ATTRIBUTE_CONTAINS_VALUE        (PREFIX.EMPTY, ACTION.CONTAINS),
+    ATTRIBUTE_EQUALS_VALUE          (PREFIX.EMPTY, ACTION.EQUALS),
+    ATTRIBUTE_WITHOUT_VALUE         (PREFIX.EMPTY, ACTION.ATTRIBUTE_ONLY),
 
-    AND_CONTAINS            (PREFIX.AND,        ACTION.CONTAINS),
-    OR_CONTAINS             (PREFIX.OR,         ACTION.CONTAINS),
-    NOT_CONTAINS            (PREFIX.NOT,        ACTION.CONTAINS),
+    ATTRIBUTE_NOT_CONTAINS_VALUE    (PREFIX.EMPTY, ACTION.NOT_CONTAINS),
+    ATTRIBUTE_NOT_EQUALS_VALUE      (PREFIX.EMPTY, ACTION.NOT_EQUALS),
+    NOT_ATTRIBUTE_WITHOUT_VALUE     (PREFIX.EMPTY, ACTION.NOT_ATTRIBUTE),
 
-    EQUALS                  (PREFIX.EMPTY,      ACTION.EQUALS),
+    OR_ATTRIBUTE_WITHOUT_VALUE      (PREFIX.OR, ACTION.ATTRIBUTE_ONLY),
+    OR_NOT_ATTRIBUTE_WITHOUT_VALUE  (PREFIX.OR, ACTION.NOT_ATTRIBUTE),
+    AND_ATTRIBUTE_WITHOUT_VALUE     (PREFIX.AND, ACTION.ATTRIBUTE_ONLY),
+    AND_NOT_ATTRIBUTE_WITHOUT_VALUE (PREFIX.AND, ACTION.NOT_ATTRIBUTE),
 
-    AND_EQUALS              (PREFIX.AND,        ACTION.EQUALS),  /** todo XPath action equals and equals is in current implementation nonsense as it will be created for the same ATTRIBUTE .... implementation need to be extended if needed... which is exceptional and I dont think it will be ever really needed.  */
-    OR_EQUALS               (PREFIX.OR,         ACTION.EQUALS),
-    NOT_EQUALS              (PREFIX.NOT,        ACTION.EQUALS),
+    AND_CONTAINS                    (PREFIX.AND, ACTION.CONTAINS),
+    AND_NOT_CONTAINS                (PREFIX.AND, ACTION.NOT_CONTAINS),
+    OR_CONTAINS                     (PREFIX.OR, ACTION.CONTAINS),
+    OR_NOT_CONTAINS                 (PREFIX.OR, ACTION.NOT_CONTAINS),
 
-    FOLLOWING_DESCENDANT    (PREFIX.FOLLOWING,  ACTION.DESCENDANT),
-    FOLLOWING_CHILD         (PREFIX.FOLLOWING,  ACTION.CHILD),
-    FOLLOWING_SIBLING       (PREFIX.FOLLOWING,  ACTION.SIBLING);
-
+    AND_EQUALS                      (PREFIX.AND, ACTION.EQUALS),
+    AND_NOT_EQUALS                  (PREFIX.AND, ACTION.NOT_EQUALS),
+    OR_EQUALS                       (PREFIX.OR, ACTION.EQUALS),
+    OR_NOT_EQUALS                   (PREFIX.OR, ACTION.NOT_EQUALS);
 
     private PREFIX preAction;
     private ACTION postAction;
@@ -38,7 +44,7 @@ public enum ACTIONS {
         return preAction;
     }
 
-    public ACTION getAction(){
+    public ACTION getPostAction(){
         return postAction;
     }
 
